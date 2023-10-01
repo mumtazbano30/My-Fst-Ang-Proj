@@ -24,10 +24,14 @@
     border: 1px solid #ccc;
     border-radius: 5px;
   }
-  
-  input[type="radio"] {
-    margin-right: 5px;
+  .gender-radio {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
   }
+  
+  .gender-radio label {
+    margin: 0; }
   
   .error {
     color: red;
@@ -41,6 +45,18 @@
     border-radius: 5px;
     cursor: pointer;
   }
+  /* Styling for success and error messages */
+.success-message {
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}
   
   
   

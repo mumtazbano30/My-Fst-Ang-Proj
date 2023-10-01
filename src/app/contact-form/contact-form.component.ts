@@ -1,64 +1,77 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import emailjs, { EmailJSResponseStatus } from 'emailjs-com';
 @Component({
   selector: 'app-contact-form',
   templateUrl: './contact-form.component.html',
-  styleUrls: ['./contact-form.component.css']
+  styleUrls: ['./contact-form.component.css'],
 })
-export class ContactFormComponent implements OnInit {
-// [x: string]: any;
-  contactForm!: FormGroup;
-// contact: any;
+export class ContactFormComponent {
+  contactForm: FormGroup;
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
 
   constructor(private fb: FormBuilder) {
-
-  }
-  ngOnInit(): void {
     this.contactForm = this.fb.group({
-      fullName: ['', [Validators.required, Validators.pattern(/^[^0-9].*$/)]],
+      name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       contactNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      gender: ['', [Validators.required]],
-      address: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(200)]]
+      gender: ['', Validators.required],
+      address: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(200)]],
     });
   }
- 
 
-  onSubmit() {
-    if (this.contactForm.valid) {
-      const fullName = this.contactForm.get('fullName')?.value;
-      const email = this.contactForm.get('email')?.value;
-      const contactNumber = this.contactForm.get('contactNumber')?.value;
-      const gender = this.contactForm.get('gender')?.value;
-      const address = this.contactForm.get('address')?.value;
-  
-      const responseMessage = `
-        Full Name: ${fullName}
-        Email: ${email}
-        Contact Number: ${contactNumber}
-        Gender: ${gender}
-        Address: ${address}
-      `;
-  
-      alert(responseMessage);
-      alert('Thanks For contact us.');
-  
-      // Reset the form
-      this.contactForm.reset();
-    } else {
-      // If the form is invalid, display validation messages
-      this.markFormGroupTouched(this.contactForm);
-    }
+  public sendEmail(params: any) {
+    emailjs
+      .send('service_qbeq1id', 'template_d37bkw6', params, 'GbaQxc_ppEIbcc2h8')
+      .then((result: EmailJSResponseStatus) => {
+        console.log(result.text);
+        alert('Email sent successfully!');
+          //reset
+        this.contactForm.reset();
+        this.successMessage = 'Email sent successfully.';
+        this.errorMessage = null;
+      })
+      .catch((error) => {
+        console.log(error.text);
+        alert('Error sending email: ' + error.text);
+        this.errorMessage = 'Error sending email: ' + error.text;
+        this.successMessage = null;
+      });
   }
-  
+
   markFormGroupTouched(formGroup: FormGroup) {
-    Object.values(formGroup.controls).forEach(control => {
+    Object.values(formGroup.controls).forEach((control) => {
       control.markAsTouched();
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
       }
     });
   }
-  
+
+  onSubmit() {
+    if (this.contactForm.valid) {
+      const formData = this.contactForm.value;
+
+      const params = {
+        name: formData.name,
+        email: formData.email,
+        contactNumber: formData.contactNumber,
+        gender: formData.gender,
+        address: formData.address,
+      };
+
+      // Send the email with the updated params
+      this.sendEmail(params);
+    } else {
+      this.markFormGroupTouched(this.contactForm);
+    }
+  }
 }
+
+
+
+
+
+
+
