@@ -21,6 +21,7 @@ export class ContactFormComponent {
     });
   }
 
+
   public sendEmail(params: any) {
     emailjs
       .send('service_qbeq1id', 'template_d37bkw6', params, 'GbaQxc_ppEIbcc2h8')
